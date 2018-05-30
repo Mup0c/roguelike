@@ -3,4 +3,6 @@ project(roguelike)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(roguelike main.cpp)
+set(CMAKE_CXX_FLAGS "-lncurses")
+
+add_executable(roguelike main.cpp main.h)
