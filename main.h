@@ -28,7 +28,7 @@ public:
     int damage() const { return damage_; }
     bool maked_turn() const { return maked_turn_; }
     void maked_turn(bool new_flag) { maked_turn_ = new_flag; }
-    virtual char sign() const { return sign_; }
+    char sign() const { return sign_; }
     virtual void move(std::vector<std::vector<std::shared_ptr<Character>>> &map,
                       const std::shared_ptr<Point> &this_pos);
     virtual void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
@@ -48,7 +48,6 @@ class Navalny: public Character
 public:
     Navalny();
     std::shared_ptr<Point> dir() { return dir_; }
-    char sign() const override { return sign_; }
     void dir(std::shared_ptr<Point> new_dir) { dir_ = new_dir; }
     void move(std::vector<std::vector<std::shared_ptr<Character>>> &map,
               const std::shared_ptr<Point> &this_pos) override;

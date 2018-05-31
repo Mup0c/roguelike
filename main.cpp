@@ -3,50 +3,46 @@
 
 int main() {
 	// Initialize ncurses
+	initscr();
+	noecho();
+	raw();
 
 	Game game;
 	game.make_map();
-	initscr();
-	clear();
 	game.draw();
-
 	game.navalny()->dir(std::make_shared<Point>(0, 0));
 
-	noecho();
-	//raw();
-	while (true){
-		int ch = getch();
-		if ((ch == 119) || (ch == 115) || (ch == 100) || (ch == 97)) {
-			switch (ch)
-			{
-				case 119:
-					game.navalny()->dir(std::make_shared<Point>(-1, 0));
-					break;
-				case 115:
-					game.navalny()->dir(std::make_shared<Point>(1, 0));
-					break;
-				case 100:
-					game.navalny()->dir(std::make_shared<Point>(0, 1));
-					break;
-				case 97:
-					game.navalny()->dir(std::make_shared<Point>(0, -1));
-					break;
-			}
-			game.make_turn();
-			game.draw();
-		}
-		if (ch == 27) {
+	bool escape = false;
+	while (!escape) {
+		int key = getch();
+		switch (key) {
+		case 119: {
+			game.navalny()->dir(std::make_shared<Point>(-1, 0));
 			break;
 		}
+		case 115: {
+			game.navalny()->dir(std::make_shared<Point>(1, 0));
+			break;
+		}
+		case 100: {
+			game.navalny()->dir(std::make_shared<Point>(0, 1));
+			break;
+		}
+		case 97: {
+			game.navalny()->dir(std::make_shared<Point>(0, -1));
+			break;
+		}
+		case 27: {
+			escape = true;
+		}
+		default: {
+			continue;
+		}
+		}
+		game.make_turn();
+		game.draw();
 	}
-	clear;
-	//Print a string on screen
-	printw("Seems that you can use ncurses ...\nPress any key to exit!");
-
- 	// Wait until the user press a key
- 	getch();
-
- 	// Clear ncurses data structures
+	clear();
  	endwin();
  }
 
