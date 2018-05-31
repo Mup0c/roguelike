@@ -66,12 +66,34 @@ public:
     Omon();
     void move(std::vector<std::vector<std::shared_ptr<Character>>> &map,
               const std::shared_ptr<Point> &this_pos) override;
-    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,   //По идее не нужны же ссылки для шаред птр
+    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
                  const std::shared_ptr<Point> &other_pos,
                  std::vector<std::vector<std::shared_ptr<Character>>> &map) override;
 
 
 };
+
+class Putan: public Character
+{
+public:
+    Putan();
+    void move(std::vector<std::vector<std::shared_ptr<Character>>> &map,
+              const std::shared_ptr<Point> &this_pos) override;
+    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
+                 const std::shared_ptr<Point> &other_pos,
+                 std::vector<std::vector<std::shared_ptr<Character>>> &map) override;
+
+};
+
+class Kremlin: public Character
+{
+public:
+    Kremlin();
+    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
+                 const std::shared_ptr<Point> &other_pos,
+                 std::vector<std::vector<std::shared_ptr<Character>>> &map) override;
+};
+
 
 class Wall: public Character
 {

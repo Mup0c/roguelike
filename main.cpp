@@ -97,6 +97,8 @@ void Game::make_map() {
 	map[1][1] = navalny_;
 	map[3][3] = std::make_shared<Wall>();
 	map[4][4] = std::make_shared<Omon>();
+	map[5][5] = std::make_shared<Putan>();
+	map[7][7] = std::make_shared<Kremlin>();
 	map_ = map;				//Не оч copy
 }
 
@@ -153,6 +155,42 @@ void Omon::move(std::vector<std::vector<std::shared_ptr<Character>>> &map, const
 void Omon::collide(const Character &other, const std::shared_ptr<Point> &this_pos,
 				   const std::shared_ptr<Point> &other_pos,
 				   std::vector<std::vector<std::shared_ptr<Character>>> &map)
+{
+
+}
+
+Putan::Putan() {
+	maked_turn_ = false;
+	hp_ = 100;
+	damage_ = 20;
+	sign_ = 'P';
+}
+
+void Putan::move(std::vector<std::vector<std::shared_ptr<Character>>> &map, const std::shared_ptr<Point> &this_pos) {
+	auto other_pos = std::make_shared<Point> (this_pos->x() + (rand() % 3 - 1), this_pos->y() + (rand() % 3 - 1));
+	if (other_pos->x() >= 0 && other_pos->x() < map.size() && other_pos->y() >= 0 && other_pos->y() < map[0].size()) {
+		map[other_pos->x()][other_pos->y()]->collide(*this, other_pos, this_pos, map);
+	}
+	maked_turn(true);
+}
+
+void Putan::collide(const Character &other, const std::shared_ptr<Point> &this_pos,
+					const std::shared_ptr<Point> &other_pos,
+			   		std::vector<std::vector<std::shared_ptr<Character>>> &map)
+{
+
+}
+
+Kremlin::Kremlin() {
+	maked_turn_ = false;
+	hp_ = INT_MAX;
+	damage_ = 0;
+	sign_ = 'K';
+}
+
+void Kremlin::collide(const Character &other, const std::shared_ptr<Point> &this_pos,
+					  const std::shared_ptr<Point> &other_pos,
+					  std::vector<std::vector<std::shared_ptr<Character>>> &map)
 {
 
 }
