@@ -38,7 +38,7 @@ int main() {
 		}
 		}
 		game.make_turn();
-		//game.draw();
+		game.draw();
 	}
 	clear();
  	endwin();
@@ -96,12 +96,12 @@ void Game::make_map() { //TODO: вынести константы, сделат�
 	movables.push_back(map[4][4]);
 	movables.push_back(map[5][5]);
 	movables.push_back(map[7][7]);
-	movables_ = std::make_shared<std::vector<std::shared_ptr<Character>>>(movables);
-	map_ = std::make_shared<std::vector<std::vector<std::shared_ptr<Character>>>>(map);
+	movables_ = movables;
+	map_ = map;
 }
 
 void Game::make_turn() {
-	for (auto &movable : movables()){
+	for (auto movable : movables()){
 		movable->move(map());
 	}
 }
