@@ -11,26 +11,25 @@ int main() {
 	Game game;
 	game.make_map();
 	game.draw();
-	game.navalny()->dir(std::make_shared<Point>(0, 0));
 
 	bool escape = false;
 	while (!escape) {
 		int key = getch();
 		switch (key) {
 		case 119: {
-			game.navalny()->dir(std::make_shared<Point>(-1, 0));
+			game.navalny()->dir(Point(-1, 0));
 			break;
 		}
 		case 115: {
-			game.navalny()->dir(std::make_shared<Point>(1, 0));
+			game.navalny()->dir(Point(1, 0));
 			break;
 		}
 		case 100: {
-			game.navalny()->dir(std::make_shared<Point>(0, 1));
+			game.navalny()->dir(Point(0, 1));
 			break;
 		}
 		case 97: {
-			game.navalny()->dir(std::make_shared<Point>(0, -1));
+			game.navalny()->dir(Point(0, -1));
 			break;
 		}
 		case 27: {
@@ -47,150 +46,94 @@ int main() {
  	endwin();
  }
 
-void Character::collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-						const std::shared_ptr<Point> &other_pos,
-						std::vector<std::vector<std::shared_ptr<Character>>> &map)
+void Character::collide(const std::shared_ptr<Character> other,
+						std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
-	std::swap(map[this_pos->x()][this_pos->y()], map[other_pos->x()][other_pos->y()]);
-}
-
-Character::Character() {
-	maked_turn_ = false;
-	hp_ = INT_MAX;
-	damage_ = 0;
-	sign_ = '.';
-}
-
-void Character::move(std::vector<std::vector<std::shared_ptr<Character>>> &map, const std::shared_ptr<Point> &this_pos) {
-	maked_turn(true);
+	std::swap((*map)[this->pos().x()][this->pos().y()], (*map)[other->pos().x()][other->pos().y()]);
 }
 
 //мув вызывает коллайд от клетки в выбранном направлении. Коллайд дамажит\свапает\двигает и вызывает обратный коллайд(нет)
-	//std::swap(map[_position.x][_position.y], map[_position.x + _direction.x][_position.y + _direction.y])
 
-void Navalny::move(std::vector<std::vector<std::shared_ptr<Character>>> &map, const std::shared_ptr<Point> &this_pos)
+void Navalny::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
-	auto other_pos = std::make_shared<Point> (this_pos->x() + dir()->x(), this_pos->y() + dir()->y());
-	if (other_pos->x() >= 0 && other_pos->x() < map.size() && other_pos->y() >= 0 && other_pos->y() < map[0].size()) {
-		map[other_pos->x()][other_pos->y()]->collide(*this, other_pos, this_pos, map);
-	}
-    maked_turn(true);
+	Point other_pos(this->pos().x() + dir().x(), this->pos().y() + dir().y());
+	(*map)[other_pos.x()][other_pos.y()]->collide(std::make_shared<Character>(*this), map);
 }
 
-void Navalny::collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-					  const std::shared_ptr<Point> &other_pos,
-					  std::vector<std::vector<std::shared_ptr<Character>>> &map)
+void Navalny::collide(const std::shared_ptr<Character> other,
+					  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
 
 }
 
-Navalny::Navalny() {
-	hp_ = 100;
-	damage_ = 5;
-	dir_ = std::make_shared<Point> (0, 0);
-	sign_ = 'N';
-}
 
-void Game::make_map() {
-	std::vector<std::vector<std::shared_ptr<Character>>> map (10, std::vector<std::shared_ptr<Character>>(20, std::make_shared<Character>()));
-	navalny_ = std::make_shared<Navalny>();
-	map[1][1] = navalny_;
-	map[3][3] = std::make_shared<Wall>();
-	map[4][4] = std::make_shared<Omon>();
-	map[5][5] = std::make_shared<Putan>();
-	map[7][7] = std::make_shared<Kremlin>();
-	map_ = map;				//Не оч copy
-}
-
-void Game::make_turn() {
-
-	for (int i = 0; i < (*map()).size(); ++i) {
-		for (int j = 0; j < (*map())[i].size(); ++j) {
-			if (!(*map())[i][j]->maked_turn()) {
-				(*map())[i][j]->move((*map()), std::make_shared<Point>(i, j));
+void Game::make_map() { //вынести константы
+	std::vector<std::vector<std::shared_ptr<Character>>> map;
+	int row_size = 20;
+	int col_size = 10;
+	map.resize(col_size);
+	for (int i = 0; i < col_size; ++i) {
+		map[i].resize(row_size);
+		for (int j = 0; j < row_size; ++j) {
+			if (i == 0 || j == 0 || i == col_size - 1 || j == row_size - 1) {
+				map[i][j] = std::make_shared<Wall>(INT_MAX, 0, '#', Point(i, j));
+			} else {
+				map[i][j] = std::make_shared<Character>(INT_MAX, 0, '.', Point(i, j));
 			}
 		}
 	}
-	for (auto &i : *map()) {
-		for (auto &j : i) {
-			j->maked_turn(false);
-		}
-	}
+	navalny_ = std::make_shared<Navalny>(100, 5, 'N', Point(1, 1));
+	map[1][1] = navalny_;
+	map[3][3] = std::make_shared<Wall>(INT_MAX, 0, '#', Point(3, 3));
+	map[4][4] = std::make_shared<Omon>(10, 5, 'O', Point(4, 4));
+	map[5][5] = std::make_shared<Putan>(30, 10, 'P', Point(5, 5));
+	map[7][7] = std::make_shared<Kremlin>(INT_MAX, 0, 'K', Point(7, 7));
+	map_ = std::make_shared<std::vector<std::vector<std::shared_ptr<Character>>>>(map);
+}
+
+void Game::make_turn() {
+// бежать по моваблес
+
 }
 
 void Game::draw() {
 	clear();
-	for (const auto &i : map_){
+	for (const auto &i : (*map())){
 		for (const auto &j : i){
-			char sign = (j->sign());
-			addch(sign);
+			char symbol = (j->symbol());
+			addch(symbol);
 		}
 		printw("\n");
 	}
 }
 
-
-Wall::Wall() {
-	maked_turn_ = false;
-	hp_ = INT_MAX;
-	damage_ = 0;
-	sign_ = '#';
+void Omon::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {
+	Point other_pos(this->pos().x() + (rand() % 3 - 1), this->pos().y() + (rand() % 3 - 1));
+	(*map)[other_pos.x()][other_pos.y()]->collide(std::make_shared<Character>(*this), map);
+		            // проверку убрать, мап не передавать, вынести двигующихся в отедльный массив
+		//можно возвращать дельту перемещения предполагаемого
+		//валидатор смотрит клетку координаты которой хранятся в моваблес, если там пол, то добавляем к координатам дельту
 }
 
-Omon::Omon() {
-	maked_turn_ = false;
-	hp_ = 10;
-	damage_ = 5;
-	sign_ = 'O';
-}
-
-void Omon::move(std::vector<std::vector<std::shared_ptr<Character>>> &map, const std::shared_ptr<Point> &this_pos) {
-	auto other_pos = std::make_shared<Point> (this_pos->x() + (rand() % 3 - 1), this_pos->y() + (rand() % 3 - 1));
-	if (other_pos->x() >= 0 && other_pos->x() < map.size() && other_pos->y() >= 0 && other_pos->y() < map[0].size()) {
-		map[other_pos->x()][other_pos->y()]->collide(*this, other_pos, this_pos, map);
-	}
-	maked_turn(true);
-}
-
-void Omon::collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-				   const std::shared_ptr<Point> &other_pos,
-				   std::vector<std::vector<std::shared_ptr<Character>>> &map)
+void Omon::collide(const std::shared_ptr<Character> other,
+				   std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
 
 }
 
-Putan::Putan() {
-	maked_turn_ = false;
-	hp_ = 100;
-	damage_ = 20;
-	sign_ = 'P';
+void Putan::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>>  map) {
+	Point other_pos(this->pos().x() + (rand() % 3 - 1), this->pos().y() + (rand() % 3 - 1));
+	(*map)[other_pos.x()][other_pos.y()]->collide(std::make_shared<Character>(*this), map);
 }
 
-void Putan::move(std::vector<std::vector<std::shared_ptr<Character>>> &map, const std::shared_ptr<Point> &this_pos) {
-	auto other_pos = std::make_shared<Point> (this_pos->x() + (rand() % 3 - 1), this_pos->y() + (rand() % 3 - 1));
-	if (other_pos->x() >= 0 && other_pos->x() < map.size() && other_pos->y() >= 0 && other_pos->y() < map[0].size()) {
-		map[other_pos->x()][other_pos->y()]->collide(*this, other_pos, this_pos, map);
-	}
-	maked_turn(true);
-}
-
-void Putan::collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-					const std::shared_ptr<Point> &other_pos,
-			   		std::vector<std::vector<std::shared_ptr<Character>>> &map)
+void Putan::collide(const std::shared_ptr<Character> other,
+					std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
 
 }
 
-Kremlin::Kremlin() {
-	maked_turn_ = false;
-	hp_ = INT_MAX;
-	damage_ = 0;
-	sign_ = 'K';
-}
-
-void Kremlin::collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-					  const std::shared_ptr<Point> &other_pos,
-					  std::vector<std::vector<std::shared_ptr<Character>>> &map)
+void Kremlin::collide(const std::shared_ptr<Character> other,
+					   std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
 
 }

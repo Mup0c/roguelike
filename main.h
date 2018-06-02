@@ -4,6 +4,7 @@
 #pragma once
 #include <vector>
 
+//Убрать main.h, разнести по файлам
 
 class Point
 {
@@ -23,52 +24,45 @@ private:
 class Character
 {
 public:
-    Character();
+    Character(int hp, int damage, char symbol, Point pos) : hp_(hp), damage_(damage), symbol_(symbol), pos_(pos) {};
     int hp() const { return hp_; }
     int damage() const { return damage_; }
-    bool maked_turn() const { return maked_turn_; }
-    void maked_turn(bool new_flag) { maked_turn_ = new_flag; }
-    char sign() const { return sign_; }
-    virtual void move(std::vector<std::vector<std::shared_ptr<Character>>> &map,
-                      const std::shared_ptr<Point> &this_pos);
-    virtual void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-                         const std::shared_ptr<Point> &other_pos,
-                         std::vector<std::vector<std::shared_ptr<Character>>> &map);
+    char symbol() const { return symbol_; }
+    Point pos() const { return pos_; }
+    void pos(Point new_pos) { pos_ = new_pos; }
+    virtual void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {};
+    virtual void collide(const std::shared_ptr<Character> other,
+                         std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
 
-protected:
-    bool maked_turn_;
+private:
     int hp_;
     int damage_;
-    char sign_;
+    char symbol_;
+    Point pos_;
 };
-
 
 class Navalny: public Character
 {
 public:
-    Navalny();
-    std::shared_ptr<Point> dir() { return dir_; }
-    void dir(std::shared_ptr<Point> new_dir) { dir_ = new_dir; }
-    void move(std::vector<std::vector<std::shared_ptr<Character>>> &map,
-              const std::shared_ptr<Point> &this_pos) override;
-    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,   //По идее не нужны же ссылки для шаред птр
-                 const std::shared_ptr<Point> &other_pos,
-                 std::vector<std::vector<std::shared_ptr<Character>>> &map) override;
+    Navalny(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    Point dir() const { return dir_; }
+    void dir(Point new_dir) { dir_ = new_dir; }
+    void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(const std::shared_ptr<Character> other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 
 private:
-    std::shared_ptr<Point> dir_{ std::make_shared<Point> (0, 0) };   //Конструирование шаред понтера ???
+    Point dir_ = Point(0, 0);
 
 };
 
 class Omon: public Character
 {
 public:
-    Omon();
-    void move(std::vector<std::vector<std::shared_ptr<Character>>> &map,
-              const std::shared_ptr<Point> &this_pos) override;
-    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-                 const std::shared_ptr<Point> &other_pos,
-                 std::vector<std::vector<std::shared_ptr<Character>>> &map) override;
+    Omon(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(const std::shared_ptr<Character> other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 
 
 };
@@ -76,32 +70,28 @@ public:
 class Putan: public Character
 {
 public:
-    Putan();
-    void move(std::vector<std::vector<std::shared_ptr<Character>>> &map,
-              const std::shared_ptr<Point> &this_pos) override;
-    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-                 const std::shared_ptr<Point> &other_pos,
-                 std::vector<std::vector<std::shared_ptr<Character>>> &map) override;
+    Putan(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(const std::shared_ptr<Character> other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 
 };
 
 class Kremlin: public Character
 {
 public:
-    Kremlin();
-    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-                 const std::shared_ptr<Point> &other_pos,
-                 std::vector<std::vector<std::shared_ptr<Character>>> &map) override;
+    Kremlin(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    void collide(const std::shared_ptr<Character> other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 };
 
 
 class Wall: public Character
 {
 public:
-    Wall();
-    void collide(const Character &other, const std::shared_ptr<Point> &this_pos,
-                 const std::shared_ptr<Point> &other_pos,
-                 std::vector<std::vector<std::shared_ptr<Character>>> &map) override {};
+    Wall(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    void collide(const std::shared_ptr<Character> other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
 
 };
 
@@ -111,9 +101,11 @@ public:
     void make_map();
     void make_turn();
     void draw();
-    std::vector<std::vector<std::shared_ptr<Character>>>* map() { return &map_; }
+    std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map() { return map_; }
+    std::shared_ptr<std::vector<std::shared_ptr<Character>>> movables() { return movables_; }
     std::shared_ptr<Navalny> navalny() { return navalny_; }
 private:
-    std::vector<std::vector<std::shared_ptr<Character>>> map_;
+    std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map_;
+    std::shared_ptr<std::vector<std::shared_ptr<Character>>> movables_;
     std::shared_ptr<Navalny> navalny_;
 };
