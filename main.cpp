@@ -44,13 +44,13 @@ int main() {
  	endwin();
  }
 
-void Character::collide(Character* other,
+void Character::collide(Character &other,
 						std::vector<std::vector<std::shared_ptr<Character>>> &map)
 {
-	std::swap(map[this->pos().x()][this->pos().y()], map[other->pos().x()][other->pos().y()]);
+	std::swap(map[this->pos().x()][this->pos().y()], map[other.pos().x()][other.pos().y()]);
 	Point temp = this->pos();
-	this->pos(other->pos());
-	other->pos(temp);
+	this->pos(other.pos());
+	other.pos(temp);
 
 }
 
@@ -59,10 +59,10 @@ void Character::collide(Character* other,
 void Navalny::move(std::vector<std::vector<std::shared_ptr<Character>>> &map)
 {
 	Point other_pos(this->pos().x() + dir().x(), this->pos().y() + dir().y());
-	map[other_pos.x()][other_pos.y()]->collide(this, map);
+	map[other_pos.x()][other_pos.y()]->collide(*this, map);
 }
 
-void Navalny::collide(Character* other,
+void Navalny::collide(Character &other,
 					  std::vector<std::vector<std::shared_ptr<Character>>> &map)
 {
 
@@ -119,13 +119,13 @@ void Game::draw() {
 
 void Omon::move(std::vector<std::vector<std::shared_ptr<Character>>> &map) {
 	Point other_pos(this->pos().x() + (rand() % 3 - 1), this->pos().y() + (rand() % 3 - 1));
-	map[other_pos.x()][other_pos.y()]->collide(this, map);
+	map[other_pos.x()][other_pos.y()]->collide(*this, map);
 		            // проверку убрать, мап не передавать, вынести двигующихся в отедльный массив
 		//можно возвращать дельту перемещения предполагаемого
 		//валидатор смотрит клетку координаты которой хранятся в моваблес, если там пол, то добавляем к координатам дельту
 }
 
-void Omon::collide(Character* other,
+void Omon::collide(Character &other,
 				   std::vector<std::vector<std::shared_ptr<Character>>> &map)
 {
 
@@ -133,16 +133,16 @@ void Omon::collide(Character* other,
 
 void Putan::move(std::vector<std::vector<std::shared_ptr<Character>>> & map) {
 	Point other_pos(this->pos().x() + (rand() % 3 - 1), this->pos().y() + (rand() % 3 - 1));
-	map[other_pos.x()][other_pos.y()]->collide(this, map);
+	map[other_pos.x()][other_pos.y()]->collide(*this, map);
 }
 
-void Putan::collide(Character* other,
+void Putan::collide(Character &other,
 					std::vector<std::vector<std::shared_ptr<Character>>> &map)
 {
 
 }
 
-void Kremlin::collide(Character* other,
+void Kremlin::collide(Character &other,
 					   std::vector<std::vector<std::shared_ptr<Character>>> &map)
 {
 
