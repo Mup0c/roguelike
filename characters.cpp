@@ -1,5 +1,5 @@
-#include <cmath>
 #include "characters.h"
+#include <cmath>
 
 void Character::collide(Character &other,
                         std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
@@ -22,7 +22,7 @@ void Navalny::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Chara
 void Navalny::collide(Character &other,
                       std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
-
+    this->hp(-other.damage());
 }
 
 void Omon::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
@@ -34,7 +34,7 @@ void Omon::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Characte
 void Omon::collide(Character &other,
                    std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
-
+    this->hp(-other.damage());
 }
 
 void Putan::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
@@ -46,7 +46,7 @@ void Putan::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Charact
 void Putan::collide(Character &other,
                     std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
-
+    this->hp(-other.damage());
 }
 
 void Kremlin::collide(Character &other,

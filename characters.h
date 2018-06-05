@@ -1,13 +1,14 @@
 #pragma once
 
-#include <vector>
 #include "point.h"
+#include <vector>
 
 class Character
 {
 public:
     Character(int hp, int damage, char symbol, Point pos) : hp_(hp), damage_(damage), symbol_(symbol), pos_(pos) {};
     int hp() const { return hp_; }
+    void hp(int delta) { hp_ += delta; }
     int damage() const { return damage_; }
     char symbol() const { return symbol_; }
     Point pos() const { return pos_; }
@@ -27,8 +28,10 @@ private:
 class Navalny: public Character
 {
 public:
-    Navalny(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    Navalny(int hp, int damage, char symbol, Point pos, int mana) : Character(hp, damage, symbol, pos), mana_(mana) {};
     Point dir() const { return dir_; }
+    int mana() const { return mana_; }
+    void mana(int delta) { mana_ += delta; }
     void dir(Point new_dir) { dir_ = new_dir; }
     void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
     void collide(Character &other,
@@ -36,6 +39,7 @@ public:
 
 private:
     Point dir_ = Point(0, 0);  //че делать с памятью, как передавать, нет же утечек без использования new? Почему не нужен шаред птр
+    int mana_;
 
 };
 
@@ -77,3 +81,4 @@ public:
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
 
 };
+//TODO: class mosnter и пустой коллайд между ними
