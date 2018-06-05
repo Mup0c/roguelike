@@ -43,23 +43,29 @@ private:
 
 };
 
-class Omon: public Character
+class Enemy: public Character
 {
 public:
-    Omon(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
     void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
     void collide(Character &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+
+protected:
+    Enemy(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
 
 };
 
-class Putan: public Character
+class Omon: public Enemy
 {
 public:
-    Putan(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
-    void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
-    void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    Omon(int hp, int damage, char symbol, Point pos) : Enemy(hp, damage, symbol, pos) {};
+
+};
+
+class Putan: public Enemy
+{
+public:
+    Putan(int hp, int damage, char symbol, Point pos) : Enemy(hp, damage, symbol, pos) {};
 
 };
 

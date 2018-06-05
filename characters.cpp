@@ -25,26 +25,14 @@ void Navalny::collide(Character &other,
     this->hp(-other.damage());
 }
 
-void Omon::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Enemy::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
     Point other_pos(this->pos().x() + (rand() % 3 - 1), this->pos().y() + (rand() % 3 - 1));
     (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
 }
 
-void Omon::collide(Character &other,
+void Enemy::collide(Character &other,
                    std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
-{
-    this->hp(-other.damage());
-}
-
-void Putan::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
-{
-    Point other_pos(this->pos().x() + (rand() % 3 - 1), this->pos().y() + (rand() % 3 - 1));
-    (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
-}
-
-void Putan::collide(Character &other,
-                    std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
     this->hp(-other.damage());
 }
