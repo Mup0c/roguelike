@@ -8,8 +8,8 @@ void Game::make_map()
     map_ = std::make_shared<std::vector<std::vector<std::shared_ptr<Character>>>>();
     std::vector<std::vector<std::shared_ptr<Character>>> map;
     std::vector<std::shared_ptr<Character>> movables;
-    int row_size = 20;
-    int col_size = 10;
+    int row_size = 8;
+    int col_size = 8;
     map.resize(col_size);
     for (int i = 0; i < col_size; ++i) {
         map[i].resize(row_size);

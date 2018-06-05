@@ -3,6 +3,8 @@
 #include "point.h"
 #include <vector>
 
+class Enemy;
+
 class Character
 {
 public:
@@ -15,6 +17,8 @@ public:
     void pos(Point new_pos) { pos_ = new_pos; }
     virtual void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {};
     virtual void collide(Character &other,
+                         std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
+    virtual void collide(Enemy &other,
                          std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
 
 private:
@@ -43,12 +47,33 @@ private:
 
 };
 
+class Kremlin: public Character
+{
+public:
+    Kremlin(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    void collide(Character &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+
+};
+
+
+class Wall: public Character
+{
+public:
+    Wall(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    void collide(Character &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
+
+};
+
 class Enemy: public Character
 {
 public:
     void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
     void collide(Character &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(Enemy &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
 
 protected:
     Enemy(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
@@ -66,25 +91,6 @@ class Putan: public Enemy
 {
 public:
     Putan(int hp, int damage, char symbol, Point pos) : Enemy(hp, damage, symbol, pos) {};
-
-};
-
-class Kremlin: public Character
-{
-public:
-    Kremlin(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
-    void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
-
-};
-
-
-class Wall: public Character
-{
-public:
-    Wall(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
-    void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
 
 };
 //TODO: class mosnter и пустой коллайд между ними

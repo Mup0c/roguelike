@@ -11,6 +11,11 @@ void Character::collide(Character &other,
     auto debug_map = *map;         //debug info
 }
 
+void Character::collide(Enemy &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {
+    Character &other_char = other;
+    this->collide(other_char, map);
+}
+
 //мув вызывает коллайд от клетки в выбранном направлении. Коллайд дамажит\свапает\двигает и вызывает обратный коллайд(нет)
 
 void Navalny::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
