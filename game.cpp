@@ -76,28 +76,28 @@ void Game::start() {
     while (!escape) {
         int key = getch();
         switch (key) {
-            case 119: {
-                navalny()->dir(Point(-1, 0));
-                break;
-            }
-            case 115: {
-                navalny()->dir(Point(1, 0));
-                break;
-            }
-            case 100: {
-                navalny()->dir(Point(0, 1));
-                break;
-            }
-            case 97: {
-                navalny()->dir(Point(0, -1));
-                break;
-            }
-            case 27: {
-                escape = true;
-            }
-            default: {
-                continue;
-            }
+        case 119: {
+            navalny()->dir(Point(-1, 0));
+            break;
+        }
+        case 115: {
+            navalny()->dir(Point(1, 0));
+            break;
+        }
+        case 100: {
+            navalny()->dir(Point(0, 1));
+            break;
+        }
+        case 97: {
+            navalny()->dir(Point(0, -1));
+            break;
+        }
+        case 27: {
+            escape = true;
+        }
+        default: {
+            continue;
+        }
         }
         make_turn();
         draw();

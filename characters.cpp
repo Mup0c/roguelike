@@ -27,7 +27,29 @@ void Navalny::collide(Character &other,
 
 void Enemy::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
-    Point other_pos(this->pos().x() + (rand() % 3 - 1), this->pos().y() + (rand() % 3 - 1));
+    Point dir;
+    switch (rand() % 4) {
+    case 0: {
+        dir = Point(-1, 0);
+        break;
+    }
+    case 1: {
+        dir = Point(1, 0);
+        break;
+    }
+    case 2: {
+        dir = Point(0, 1);
+        break;
+    }
+    case 3: {
+        dir = Point(0, -1);
+        break;
+    }
+    default: {
+        break;
+    }
+    }
+    Point other_pos(this->pos().x() + dir.x(), this->pos().y() + dir.y());
     (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
 }
 
