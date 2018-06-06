@@ -17,6 +17,7 @@ public:
     char symbol() const { return symbol_; }
     Point pos() const { return pos_; }
     void pos(Point new_pos) { pos_ = new_pos; }
+    void destroy() { hp(-hp()); };
     virtual void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {};
     virtual void collide(Character &other,
                          std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
@@ -81,7 +82,39 @@ public:
 
 class Pickups: public Character
 {
+public:
+    ~Pickups() override = default;
+    int value() const { return value_; }
+    void collide(Character &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(Enemy &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
+    void collide(Projectile &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 
+protected:
+    Pickups(int hp, int damage, char symbol, Point pos, int value) : Character(hp, damage, symbol, pos), value_(value) {};
+
+private:
+    int value_;
+};
+
+class Meth: public Pickups
+{
+public:
+    Meth(int hp, int damage, char symbol, Point pos, int value) : Pickups(hp, damage, symbol, pos, value) {};
+    ~Meth() override = default;
+    void collide(Character &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;  //TODO: проверить с енеми, вызовется ли метод родителя
+};
+
+class Cash: public Pickups
+{
+public:
+    Cash(int hp, int damage, char symbol, Point pos, int value) : Pickups(hp, damage, symbol, pos, value) {};
+    ~Cash() override = default;
+    void collide(Character &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 };
 
 class Projectile: public Character
@@ -93,16 +126,20 @@ public:
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
     void collide(Projectile &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
-    void destroy() { hp(-hp()); };
+    int cost() const { return cost_; }
+
 protected:
-    Projectile(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    Projectile(int hp, int damage, char symbol, Point pos, int cost) : Character(hp, damage, symbol, pos), cost_(cost) {};
+
+private:
+    int cost_;
 
 };
 
 class PaperPlane: public Projectile
 {
 public:
-    PaperPlane(int hp, int damage, char symbol, Point pos) : Projectile(hp, damage, symbol, pos) {};
+    PaperPlane(int hp, int damage, char symbol, Point pos, int cost) : Projectile(hp, damage, symbol, pos, cost) {};
     ~PaperPlane() override = default;
 
 };
