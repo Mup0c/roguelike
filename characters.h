@@ -4,11 +4,13 @@
 #include <vector>
 
 class Enemy;
+class Projectile;
 
 class Character
 {
 public:
     Character(int hp, int damage, char symbol, Point pos) : hp_(hp), damage_(damage), symbol_(symbol), pos_(pos) {};
+    virtual ~Character() = default;
     int hp() const { return hp_; }
     void hp(int delta) { hp_ += delta; }
     int damage() const { return damage_; }
@@ -19,6 +21,8 @@ public:
     virtual void collide(Character &other,
                          std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
     virtual void collide(Enemy &other,
+                         std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
+    virtual void collide(Projectile &other,
                          std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
 
 private:
@@ -32,18 +36,21 @@ private:
 class Navalny: public Character
 {
 public:
-    Navalny(int hp, int damage, char symbol, Point pos, int mana) : Character(hp, damage, symbol, pos), mana_(mana) {};
+    Navalny(int hp, int damage, char symbol, Point pos, int money) : Character(hp, damage, symbol, pos), money_(money) {};
+    ~Navalny() override = default;
     Point dir() const { return dir_; }
-    int mana() const { return mana_; }
-    void mana(int delta) { mana_ += delta; }
+    int money() const { return money_; }
+    void money(int delta) { money_ += delta; }
     void dir(Point new_dir) { dir_ = new_dir; }
     void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
     void collide(Character &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(Projectile &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 
 private:
     Point dir_ = Point(0, 0);  //че делать с памятью, как передавать, нет же утечек без использования new? Почему не нужен шаред птр
-    int mana_;
+    int money_;
 
 };
 
@@ -51,7 +58,10 @@ class Kremlin: public Character
 {
 public:
     Kremlin(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    ~Kremlin() override = default;
     void collide(Character &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(Projectile &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 
 };
@@ -61,19 +71,54 @@ class Wall: public Character
 {
 public:
     Wall(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    ~Wall() override = default;
     void collide(Character &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
+    void collide(Projectile &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+
+};
+
+class Pickups: public Character
+{
+
+};
+
+class Projectile: public Character
+{
+public:
+    ~Projectile() override = default;
+    void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(Character &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void collide(Projectile &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void destroy() { hp(-hp()); };
+protected:
+    Projectile(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+
+};
+
+class PaperPlane: public Projectile
+{
+public:
+    PaperPlane(int hp, int damage, char symbol, Point pos) : Projectile(hp, damage, symbol, pos) {};
+    ~PaperPlane() override = default;
 
 };
 
 class Enemy: public Character
 {
 public:
+    ~Enemy() override = default;
     void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
     void collide(Character &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
     void collide(Enemy &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
+    void collide(Projectile &other,
+                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+
 
 protected:
     Enemy(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
@@ -84,6 +129,7 @@ class Omon: public Enemy
 {
 public:
     Omon(int hp, int damage, char symbol, Point pos) : Enemy(hp, damage, symbol, pos) {};
+    ~Omon() override = default;
 
 };
 
@@ -91,6 +137,6 @@ class Putan: public Enemy
 {
 public:
     Putan(int hp, int damage, char symbol, Point pos) : Enemy(hp, damage, symbol, pos) {};
+    ~Putan() override = default;
 
 };
-//TODO: class mosnter и пустой коллайд между ними

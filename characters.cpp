@@ -16,6 +16,11 @@ void Character::collide(Enemy &other, std::shared_ptr<std::vector<std::vector<st
     this->collide(other_char, map);
 }
 
+void Character::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {
+    Character &other_char = other;
+    this->collide(other_char, map);
+}
+
 //мув вызывает коллайд от клетки в выбранном направлении. Коллайд дамажит\свапает\двигает и вызывает обратный коллайд(нет)
 
 void Navalny::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
@@ -68,4 +73,14 @@ void Kremlin::collide(Character &other,
                       std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
 
+}
+
+void Projectile::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {
+    Character::move(map);
+}
+
+void Projectile::collide(Character &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {
+    other.hp(-this->damage());
+    Character::collide(other, map);
+    this->destroy();
 }

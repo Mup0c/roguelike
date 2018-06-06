@@ -58,7 +58,7 @@ void Game::draw() {
         }
         addch('\n');
     }
-    addstr((" HP: " + std::to_string(navalny()->hp()) + "\n MP: " + std::to_string(navalny()->mana()) + "\n").c_str());
+    addstr((" HP: " + std::to_string(navalny()->hp()) + "\n MP: " + std::to_string(navalny()->money()) + "\n").c_str());
 
     for (auto movable : movables()){
         addch(movable->symbol());
