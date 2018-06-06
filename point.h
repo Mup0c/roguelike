@@ -14,3 +14,5 @@ private:
     int x_, y_;
 
 };
+
+bool operator == (const Point& first, const Point& second);

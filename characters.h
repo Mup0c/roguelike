@@ -62,7 +62,7 @@ private:
 class Kremlin: public Character
 {
 public:
-    Kremlin(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    Kremlin(char symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {};
     ~Kremlin() override = default;
     void collide(Character &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
@@ -75,7 +75,7 @@ public:
 class Wall: public Character
 {
 public:
-    Wall(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {};
+    Wall(char symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {};
     ~Wall() override = default;
     void collide(Character &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
@@ -104,7 +104,7 @@ private:
 class Meth: public Pickups
 {
 public:
-    Meth(int hp, int damage, char symbol, Point pos, int value) : Pickups(hp, damage, symbol, pos, value) {};
+    Meth(char symbol, Point pos, int value) : Pickups(INT_MAX, 0, symbol, pos, value) {};
     ~Meth() override = default;
     void collide(Navalny &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;  //TODO: проверить с енеми, вызовется ли метод родителя
@@ -113,7 +113,7 @@ public:
 class Cash: public Pickups
 {
 public:
-    Cash(int hp, int damage, char symbol, Point pos, int value) : Pickups(hp, damage, symbol, pos, value) {};
+    Cash(char symbol, Point pos, int value) : Pickups(INT_MAX, 0, symbol, pos, value) {};
     ~Cash() override = default;
     void collide(Navalny &other,
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
@@ -132,7 +132,7 @@ public:
                  std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
 
 protected:
-    Projectile(int hp, int damage, char symbol, Point pos, int cost, Point dir) : Character(hp, damage, symbol, pos),
+    Projectile(int damage, char symbol, Point pos, int cost, Point dir) : Character(INT_MAX, damage, symbol, pos),
                                                                                   cost_(cost), dir_(dir) {};
 
 private:
@@ -144,7 +144,7 @@ private:
 class PaperPlane: public Projectile
 {
 public:
-    PaperPlane(int hp, int damage, char symbol, Point pos, int cost, Point dir) : Projectile(hp, damage, symbol, pos, cost, dir) {};
+    PaperPlane(int damage, char symbol, Point pos, int cost, Point dir) : Projectile(damage, symbol, pos, cost, dir) {};
     ~PaperPlane() override = default;
 
 };

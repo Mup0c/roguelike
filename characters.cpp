@@ -35,7 +35,9 @@ void Character::collide(Navalny &other, std::shared_ptr<std::vector<std::vector<
 void Navalny::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
     Point other_pos(this->pos().x() + dir().x(), this->pos().y() + dir().y());
-    (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
+    if (!(this->pos() == other_pos)) {
+        (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
+    }
 }
 
 void Navalny::collide(Character &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
@@ -108,7 +110,8 @@ void Projectile::collide(Character &other, std::shared_ptr<std::vector<std::vect
 void Projectile::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
     Point other_pos(this->pos().x() + dir().x(), this->pos().y() + dir().y());
-    (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);}
+    (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
+}
 
 void Projectile::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
@@ -129,9 +132,16 @@ void Pickups::collide(Projectile &other, std::shared_ptr<std::vector<std::vector
 void Meth::collide(Navalny &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
     other.hp(value());
+    this->destroy();
+    Character &other_char = other;
+    Character::collide(other_char, map);
 }
+
 
 void Cash::collide(Navalny &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
 {
     other.money(value());
+    this->destroy();
+    Character &other_char = other;
+    Character::collide(other_char, map);
 }
