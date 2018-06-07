@@ -1,29 +1,28 @@
 #include "characters.h"
 #include <cmath>
 
-void Character::collide(Character &other,
-                        std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Character::collide(Character &other, std::shared_ptr<Map> map)
 {
-    std::swap((*map)[this->pos().x()][this->pos().y()], (*map)[other.pos().x()][other.pos().y()]);
+    std::swap(map->map()[this->pos().x()][this->pos().y()], map->map()[other.pos().x()][other.pos().y()]);
     Point temp = this->pos();
     this->pos(other.pos());
     other.pos(temp);
     auto debug_map = *map;         //debug info
 }
 
-void Character::collide(Enemy &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Character::collide(Enemy &other, std::shared_ptr<Map> map)
 {
     Character &other_char = other;
     this->collide(other_char, map);
 }
 
-void Character::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Character::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     Character &other_char = other;
     this->collide(other_char, map);
 }
 
-void Character::collide(Navalny &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Character::collide(Navalny &other, std::shared_ptr<Map> map)
 {
     Character &other_char = other;
     this->collide(other_char, map);
@@ -32,26 +31,26 @@ void Character::collide(Navalny &other, std::shared_ptr<std::vector<std::vector<
 //мув вызывает коллайд от клетки в выбранном направлении. Коллайд дамажит\свапает\двигает и вызывает обратный коллайд(нет)
 //Коллайд - other произваодит действие над this
 
-void Navalny::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Navalny::move(std::shared_ptr<Map> map)
 {
     Point other_pos(this->pos().x() + dir().x(), this->pos().y() + dir().y());
     if (!(this->pos() == other_pos)) {
-        (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
+        map->map()[other_pos.x()][other_pos.y()]->collide(*this, map);
     }
 }
 
-void Navalny::collide(Character &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Navalny::collide(Character &other, std::shared_ptr<Map> map)
 {
     this->hp(-other.damage());
 }
 
-void Navalny::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Navalny::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     this->hp(-other.damage());
     other.destroy();
 }
 
-void Enemy::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Enemy::move(std::shared_ptr<Map> map)
 {
     Point dir;
     switch (rand() % 4) {
@@ -76,60 +75,59 @@ void Enemy::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Charact
     }
     }
     Point other_pos(this->pos().x() + dir.x(), this->pos().y() + dir.y());
-    (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
+    map->map()[other_pos.x()][other_pos.y()]->collide(*this, map);
 }
 
-void Enemy::collide(Character &other,
-                   std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Enemy::collide(Character &other, std::shared_ptr<Map> map)
 {
     this->hp(-other.damage());
 }
 
-void Enemy::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Enemy::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     this->hp(-other.damage());
 }
 
-void Kremlin::collide(Character &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Kremlin::collide(Character &other, std::shared_ptr<Map> map)
 {
 //TODO: implement
 }
 
-void Kremlin::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Kremlin::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     other.destroy();
 }
 
-void Projectile::collide(Character &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Projectile::collide(Character &other, std::shared_ptr<Map> map)
 {
     other.hp(-this->damage());
     Character::collide(other, map);
     this->destroy();
 }
 
-void Projectile::move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Projectile::move(std::shared_ptr<Map> map)
 {
     Point other_pos(this->pos().x() + dir().x(), this->pos().y() + dir().y());
-    (*map)[other_pos.x()][other_pos.y()]->collide(*this, map);
+    map->map()[other_pos.x()][other_pos.y()]->collide(*this, map);
 }
 
-void Projectile::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Projectile::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     this->destroy();
     other.destroy();
 }
 
-void Wall::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Wall::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     other.destroy();
 }
 
-void Pickups::collide(Projectile &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Pickups::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     other.destroy();
 }
 
-void Meth::collide(Navalny &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Meth::collide(Navalny &other, std::shared_ptr<Map> map)
 {
     other.hp(value());
     this->destroy();
@@ -138,7 +136,7 @@ void Meth::collide(Navalny &other, std::shared_ptr<std::vector<std::vector<std::
 }
 
 
-void Cash::collide(Navalny &other, std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map)
+void Cash::collide(Navalny &other, std::shared_ptr<Map> map)
 {
     other.money(value());
     this->destroy();

@@ -1,8 +1,10 @@
 #pragma once
 
 #include "point.h"
+#include "map.h"
 #include <vector>
 
+class Map;
 class Enemy;
 class Projectile;
 class Pickups;
@@ -20,15 +22,15 @@ public:
     Point pos() const { return pos_; }
     void pos(Point new_pos) { pos_ = new_pos; }
     void destroy() { hp(-hp()); };
-    virtual void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) {};
+    virtual void move(std::shared_ptr<Map> map) {};
     virtual void collide(Character &other,
-                         std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
+                         std::shared_ptr<Map> map);
     virtual void collide(Enemy &other,
-                         std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
+                         std::shared_ptr<Map> map);
     virtual void collide(Projectile &other,
-                         std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
+                         std::shared_ptr<Map> map);
     virtual void collide(Navalny &other,
-                         std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map);
+                         std::shared_ptr<Map> map);
 
 private:
     int hp_;
@@ -47,11 +49,11 @@ public:
     int money() const { return money_; }
     void money(int delta) { money_ += delta; }
     void dir(Point new_dir) { dir_ = new_dir; }
-    void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void move(std::shared_ptr<Map> map) override;
     void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
     void collide(Projectile &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
 
 private:
     Point dir_ = Point(0, 0);  //че делать с памятью, как передавать, нет же утечек без использования new? Почему не нужен шаред птр
@@ -65,9 +67,9 @@ public:
     Kremlin(char symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {};
     ~Kremlin() override = default;
     void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
     void collide(Projectile &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
 
 };
 
@@ -78,9 +80,9 @@ public:
     Wall(char symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {};
     ~Wall() override = default;
     void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
+                 std::shared_ptr<Map> map) override {};
     void collide(Projectile &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
 
 };
 
@@ -90,9 +92,9 @@ public:
     ~Pickups() override = default;
     int value() const { return value_; }
     void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
+                 std::shared_ptr<Map> map) override {};
     void collide(Projectile &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
 
 protected:
     Pickups(int hp, int damage, char symbol, Point pos, int value) : Character(hp, damage, symbol, pos), value_(value) {};
@@ -107,7 +109,7 @@ public:
     Meth(char symbol, Point pos, int value) : Pickups(INT_MAX, 0, symbol, pos, value) {};
     ~Meth() override = default;
     void collide(Navalny &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;  //TODO: проверить с енеми, вызовется ли метод родителя
+                 std::shared_ptr<Map> map) override;
 };
 
 class Cash: public Pickups
@@ -116,7 +118,7 @@ public:
     Cash(char symbol, Point pos, int value) : Pickups(INT_MAX, 0, symbol, pos, value) {};
     ~Cash() override = default;
     void collide(Navalny &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
 };
 
 class Projectile: public Character
@@ -125,11 +127,11 @@ public:
     ~Projectile() override = default;
     int cost() const { return cost_; }
     Point dir() const { return dir_; }
-    void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void move(std::shared_ptr<Map> map) override;
     void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
     void collide(Projectile &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
 
 protected:
     Projectile(int damage, char symbol, Point pos, int cost, Point dir) : Character(INT_MAX, damage, symbol, pos),
@@ -153,13 +155,13 @@ class Enemy: public Character
 {
 public:
     ~Enemy() override = default;
-    void move(std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+    void move(std::shared_ptr<Map> map) override;
     void collide(Character &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
     void collide(Enemy &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override {};
+                 std::shared_ptr<Map> map) override {};
     void collide(Projectile &other,
-                 std::shared_ptr<std::vector<std::vector<std::shared_ptr<Character>>>> map) override;
+                 std::shared_ptr<Map> map) override;
 
 
 protected:
