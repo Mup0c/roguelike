@@ -3,10 +3,10 @@
 
 void Character::collide(Character &other, std::shared_ptr<Map> map)
 {
-    if (map->validate_pos(other.pos())) {
+    if (map->is_on_map(other.pos())) {
         std::swap(map->map()[this->pos().x()][this->pos().y()], map->map()[other.pos().x()][other.pos().y()]);
     } else {
-        //map->map()[this->pos().x()][this->pos().y()] =
+        map->map()[this->pos().x()][this->pos().y()] = map->interactables().front();
     }
     Point temp = this->pos();
     this->pos(other.pos());
@@ -112,7 +112,7 @@ void Projectile::collide(Character &other, std::shared_ptr<Map> map)
 
 void Projectile::move(std::shared_ptr<Map> map)
 {
-    Point other_pos(this->pos().x() + dir().x(), this->pos().y() + dir().y());
+    Point other_pos = abs(this->pos()) + dir();
     map->map()[other_pos.x()][other_pos.y()]->collide(*this, map);
 }
 

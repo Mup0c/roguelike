@@ -16,7 +16,7 @@ void Game::make_map()
             if (i == 0 || j == 0 || i == col_size - 1 || j == row_size - 1) {
                 map[i][j] = std::make_shared<Wall>('#', Point(i, j));
             } else {
-                map[i][j] = std::make_shared<Character>(INT_MAX, 0, '.', Point(i, j));
+                map[i][j] = std::make_shared<Character>(INT_MAX, 0, ' ', Point(i, j));
             }
         }
     }
@@ -44,7 +44,9 @@ void Game::make_turn() {
     for (int i = map()->interactables().size() - 1; i >= 0; --i){
         if (map()->interactables()[i]->hp() <= 0) {
             Point pos = map()->interactables()[i]->pos();
-            map()->map()[pos.x()][pos.y()] = std::make_shared<Character>(INT_MAX, 0, '.', Point(pos.x(), pos.y()));
+            if (map()->is_on_map(pos)) {
+                map()->map()[pos.x()][pos.y()] = std::make_shared<Character>(INT_MAX, 0, ' ', Point(pos.x(), pos.y()));
+            }
             map()->interactables().erase(map()->interactables().begin() + i);
         }
     }
@@ -78,24 +80,39 @@ void Game::start() {
     while (!escape) {
         int key = getch();
         switch (key) {
-        case 119: {
+        case 'w': {
             map()->navalny()->dir(Point(-1, 0));
             break;
         }
-        case 115: {
+        case 's': {
             map()->navalny()->dir(Point(1, 0));
             break;
         }
-        case 100: {
+        case 'd': {
             map()->navalny()->dir(Point(0, 1));
             break;
         }
-        case 97: {
+        case 'a': {
             map()->navalny()->dir(Point(0, -1));
             break;
         }
-        case 101: {
-            //shoot(std::make_shared<PaperPlane>(2, '>', Point(0, 0), 4, map()->navalny()->dir()));
+        case 'i': {
+            shoot(std::make_shared<PaperPlane>(2, '^', -map()->navalny()->pos(), 4, Point(-1, 0)));
+            map()->navalny()->dir(Point(0, 0));
+            break;
+        }
+        case 'k': {
+            shoot(std::make_shared<PaperPlane>(2, 'v', -map()->navalny()->pos(), 4, Point(1, 0)));
+            map()->navalny()->dir(Point(0, 0));
+            break;
+        }
+        case 'l': {
+            shoot(std::make_shared<PaperPlane>(2, '>', -map()->navalny()->pos(), 4, Point(0, 1)));
+            map()->navalny()->dir(Point(0, 0));
+            break;
+        }
+        case 'j': {
+            shoot(std::make_shared<PaperPlane>(2, '<', -map()->navalny()->pos(), 4, Point(0, -1)));
             map()->navalny()->dir(Point(0, 0));
             break;
         }
@@ -115,14 +132,9 @@ void Game::start() {
 }
 
 void Game::shoot(std::shared_ptr<Projectile> projectile) {
-   /* if (map()->navalny()->money() < projectile->cost()) { return; }
+    if (map()->navalny()->money() < projectile->cost()) { return; }
     map()->navalny()->money(-projectile->cost());
-    map()->map()[0][0] = projectile;
-    map()->interactables().push_back(projectile);
-    Point shooter_pos = map()->navalny()->pos();
-    map()->map()[shooter_pos.x() + projectile->dir().x()][shooter_pos.y() + projectile->dir().y()]->collide(*projectile, map());
-    draw();*/
-
+    map()->interactables().push_front(projectile);
 }
 //при спавне позиция меньше нуля, в муве коллайдимся с позиция шутера+дир
 //валидатор в класс map
