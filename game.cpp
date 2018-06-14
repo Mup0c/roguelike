@@ -6,7 +6,7 @@
 void Game::make_map()
 { //TODO: вынести константы, сделать загрузку карты и параметров героев с файла
     std::vector<std::vector<std::shared_ptr<Character>>> map;
-    std::vector<std::shared_ptr<Character>> interactables;
+    std::deque<std::shared_ptr<Character>> interactables;
     int row_size = 20;
     int col_size = 20;
     map.resize(col_size);
@@ -37,7 +37,7 @@ void Game::make_map()
 }
 
 void Game::make_turn() {
-    for (auto interactable : map()->interactables()){
+    for (const auto &interactable : map()->interactables()){
         interactable->move(map());
         auto debug_map = *map();         //debug info
     }
@@ -62,7 +62,7 @@ void Game::draw() {
     }
     addstr((" HP: " + std::to_string(map()->navalny()->hp()) + "\n MP: " + std::to_string(map()->navalny()->money()) + "\n").c_str());
 
-    for (auto interactable : map()->interactables()){
+    for (const auto &interactable : map()->interactables()){
         addch(interactable->symbol());
         addstr((" HP: " + std::to_string(interactable->hp()) + "\n").c_str());  //debug info
     }

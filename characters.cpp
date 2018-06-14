@@ -3,7 +3,11 @@
 
 void Character::collide(Character &other, std::shared_ptr<Map> map)
 {
-    std::swap(map->map()[this->pos().x()][this->pos().y()], map->map()[other.pos().x()][other.pos().y()]);
+    if (map->validate_pos(other.pos())) {
+        std::swap(map->map()[this->pos().x()][this->pos().y()], map->map()[other.pos().x()][other.pos().y()]);
+    } else {
+        //map->map()[this->pos().x()][this->pos().y()] =
+    }
     Point temp = this->pos();
     this->pos(other.pos());
     other.pos(temp);
@@ -86,6 +90,7 @@ void Enemy::collide(Character &other, std::shared_ptr<Map> map)
 void Enemy::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     this->hp(-other.damage());
+    other.destroy();
 }
 
 void Kremlin::collide(Character &other, std::shared_ptr<Map> map)
