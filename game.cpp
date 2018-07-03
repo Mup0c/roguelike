@@ -77,7 +77,7 @@ void Game::draw() {
 void Game::start() {
     make_map();
 
-    initscr();	noecho();	raw(); draw();
+    initscr();	noecho();   raw();   draw();   halfdelay(1);
     bool win = false;
     bool loose = false;
     bool escape = false;
@@ -122,10 +122,10 @@ void Game::start() {
         }
         case 27: {
             escape = true;
+            continue;
         }
         default: {
             map()->navalny()->dir(Point(0, 0));
-            continue;
         }
         }
         make_turn();
@@ -133,6 +133,7 @@ void Game::start() {
         win = map()->kremlin()->hp() <= 0;
         loose = map()->navalny()->hp() <= 0;
         if (win || loose) {
+            nodelay(stdscr, FALSE);
             break;
         }
     }
