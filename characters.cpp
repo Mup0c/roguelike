@@ -93,14 +93,15 @@ void Enemy::collide(Projectile &other, std::shared_ptr<Map> map)
     other.destroy();
 }
 
-void Kremlin::collide(Character &other, std::shared_ptr<Map> map)
-{
-//TODO: implement
-}
-
 void Kremlin::collide(Projectile &other, std::shared_ptr<Map> map)
 {
     other.destroy();
+}
+
+void Kremlin::collide(Navalny &other, std::shared_ptr<Map> map)
+{
+    Character::collide(other, map);
+    this->destroy();
 }
 
 void Projectile::collide(Character &other, std::shared_ptr<Map> map)
@@ -139,7 +140,6 @@ void Meth::collide(Navalny &other, std::shared_ptr<Map> map)
     Character &other_char = other;
     Character::collide(other_char, map);
 }
-
 
 void Cash::collide(Navalny &other, std::shared_ptr<Map> map)
 {

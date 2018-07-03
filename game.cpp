@@ -21,19 +21,22 @@ void Game::make_map()
         }
     }
     auto navalny = std::make_shared<Navalny>(100, 5, 'N', Point(1, 1), 50);
+    auto kremlin = std::make_shared<Kremlin>('K', Point(10, 10));
     map[1][1] = navalny;
     map[3][3] = std::make_shared<Wall>('#', Point(3, 3));
     map[4][4] = std::make_shared<Omon>(11, 2, 'O', Point(4, 4));
     map[5][5] = std::make_shared<Putan>(30, 9, 'P', Point(5, 5));
     map[7][7] = std::make_shared<Meth>('+', Point(7, 7), 10000);
     map[8][8] = std::make_shared<Cash>('$', Point(8, 8), 10000);
+    map[10][10] = kremlin;
     interactables.push_back(map[1][1]);
     interactables.push_back(map[4][4]);
     interactables.push_back(map[5][5]);
     interactables.push_back(map[7][7]);
     interactables.push_back(map[8][8]);
+    interactables.push_back(map[10][10]);
 
-    map_= std::make_shared<Map>(map, interactables, navalny);
+    map_= std::make_shared<Map>(map, interactables, navalny, kremlin);
 }
 
 void Game::make_turn() {
@@ -75,7 +78,8 @@ void Game::start() {
     make_map();
 
     initscr();	noecho();	raw(); draw();
-
+    bool win = false;
+    bool loose = false;
     bool escape = false;
     while (!escape) {
         int key = getch();
@@ -96,7 +100,7 @@ void Game::start() {
             map()->navalny()->dir(Point(0, -1));
             break;
         }
-        case 'i': {
+        case 'i': {  //TODO: вынести. Сделать массив direction 01, 00 -10 0-1
             shoot(std::make_shared<PaperPlane>(2, '^', -map()->navalny()->pos(), 4, Point(-1, 0)));
             map()->navalny()->dir(Point(0, 0));
             break;
@@ -126,8 +130,21 @@ void Game::start() {
         }
         make_turn();
         draw();
+        win = map()->kremlin()->hp() <= 0;
+        loose = map()->navalny()->hp() <= 0;
+        if (win || loose) {
+            break;
+        }
     }
     clear();
+    if (win) {
+        addstr("Congratulations! You win!");
+        getch();
+    }
+    if (loose) {
+        addstr("YOU DIED");
+        getch();
+    }
     endwin();
 }
 

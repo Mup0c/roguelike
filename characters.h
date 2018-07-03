@@ -50,7 +50,7 @@ public:
     void collide(Projectile &other, std::shared_ptr<Map> map) override;
 
 private:
-    Point dir_ = Point(0, 0);  //че делать с памятью, как передавать, нет же утечек без использования new? Почему не нужен шаред птр
+    Point dir_ = Point(0, 0);
     int money_;
 
 };
@@ -60,7 +60,8 @@ class Kremlin: public Character
 public:
     Kremlin(char symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {};
     ~Kremlin() override = default;
-    void collide(Character &other, std::shared_ptr<Map> map) override;
+    void collide(Character &other, std::shared_ptr<Map> map) override {}
+    void collide(Navalny &other, std::shared_ptr<Map> map) override;
     void collide(Projectile &other, std::shared_ptr<Map> map) override;
 
 };
