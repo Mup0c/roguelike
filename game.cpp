@@ -1,5 +1,5 @@
 #include "game.h"
-#include <iostream>
+#include <fstream>
 #include <ncurses.h>
 
 Game::Game() {
@@ -16,9 +16,9 @@ Game::Game() {
     std::shared_ptr<Navalny> navalny;
     std::shared_ptr<Kremlin> kremlin;
 
-    freopen("../map.txt", "r", stdin);
+    std::ifstream map_stream("../map.txt");
     while (!end) {
-        char character = std::cin.get();
+        char character = map_stream.get();
         std::string str_char;
         str_char.push_back(character);
         if (str_char == cfg["Character"]["symbol"]) {
@@ -95,9 +95,8 @@ Game::Game() {
             end = true;
         }
     }
-    fclose(stdin);
     if (error) {
-        std::cout << "Wrong map!";
+        printf("\nWrong map!\n\n");
         exit(1);
     }
 
@@ -142,7 +141,7 @@ void Game::draw() {
 }
 
 void Game::start() {
-    initscr();	noecho();   raw();  timeout(1);
+    initscr();	noecho();   raw();  timeout(100);
     const auto cfg = config()->json();
     bool win = false;
     bool loose = false;
