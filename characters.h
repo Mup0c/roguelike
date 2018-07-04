@@ -3,6 +3,7 @@
 #include "point.h"
 #include "map.h"
 #include <vector>
+#include <string>
 
 class Map;
 class Enemy;
@@ -13,7 +14,7 @@ class Navalny;
 class Character
 {
 public:
-    Character(int hp, int damage, char symbol, Point pos) : hp_(hp), damage_(damage), symbol_(symbol), pos_(pos) {}
+    Character(int hp, int damage, std::string symbol, Point pos) : hp_(hp), damage_(damage), symbol_(symbol[0]), pos_(pos) {}
     virtual ~Character() = default;
     int hp() const { return hp_; }
     void hp(int delta) { hp_ += delta; }
@@ -39,7 +40,7 @@ private:
 class Navalny: public Character
 {
 public:
-    Navalny(int hp, int damage, char symbol, Point pos, int money) : Character(hp, damage, symbol, pos), money_(money) {}
+    Navalny(int hp, int damage, std::string symbol, Point pos, int money) : Character(hp, damage, symbol, pos), money_(money) {}
     ~Navalny() override = default;
     Point dir() const { return dir_; }
     int money() const { return money_; }
@@ -58,7 +59,7 @@ private:
 class Kremlin: public Character
 {
 public:
-    Kremlin(char symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {};
+    Kremlin(std::string symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {};
     ~Kremlin() override = default;
     void collide(Character &other, std::shared_ptr<Map> map) override {}
     void collide(Navalny &other, std::shared_ptr<Map> map) override;
@@ -70,7 +71,7 @@ public:
 class Wall: public Character
 {
 public:
-    Wall(char symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {}
+    Wall(std::string symbol, Point pos) : Character(INT_MAX, 0, symbol, pos) {}
     ~Wall() override = default;
     void collide(Character &other, std::shared_ptr<Map> map) override {}
     void collide(Projectile &other, std::shared_ptr<Map> map) override;
@@ -86,7 +87,7 @@ public:
     void collide(Projectile &other, std::shared_ptr<Map> map) override;
 
 protected:
-    Pickups(int hp, int damage, char symbol, Point pos, int value) : Character(hp, damage, symbol, pos), value_(value) {}
+    Pickups(int hp, int damage, std::string symbol, Point pos, int value) : Character(hp, damage, symbol, pos), value_(value) {}
 
 private:
     int value_;
@@ -95,7 +96,7 @@ private:
 class Meth: public Pickups
 {
 public:
-    Meth(char symbol, Point pos, int value) : Pickups(INT_MAX, 0, symbol, pos, value) {}
+    Meth(std::string symbol, Point pos, int value) : Pickups(INT_MAX, 0, symbol, pos, value) {}
     ~Meth() override = default;
     void collide(Navalny &other, std::shared_ptr<Map> map) override;
 };
@@ -103,7 +104,7 @@ public:
 class Cash: public Pickups
 {
 public:
-    Cash(char symbol, Point pos, int value) : Pickups(INT_MAX, 0, symbol, pos, value) {}
+    Cash(std::string symbol, Point pos, int value) : Pickups(INT_MAX, 0, symbol, pos, value) {}
     ~Cash() override = default;
     void collide(Navalny &other, std::shared_ptr<Map> map) override;
 };
@@ -119,7 +120,7 @@ public:
     void collide(Projectile &other, std::shared_ptr<Map> map) override;
 
 protected:
-    Projectile(int damage, char symbol, Point pos, int cost, Point dir) : Character(INT_MAX, damage, symbol, pos),
+    Projectile(int damage, std::string symbol, Point pos, int cost, Point dir) : Character(INT_MAX, damage, symbol, pos),
                                                                                   cost_(cost), dir_(dir) {}
 
 private:
@@ -131,7 +132,7 @@ private:
 class PaperPlane: public Projectile
 {
 public:
-    PaperPlane(int damage, char symbol, Point pos, int cost, Point dir) : Projectile(damage, symbol, pos, cost, dir) {}
+    PaperPlane(int damage, std::string symbol, Point pos, int cost, Point dir) : Projectile(damage, symbol, pos, cost, dir) {}
     ~PaperPlane() override = default;
 
 };
@@ -147,14 +148,14 @@ public:
 
 
 protected:
-    Enemy(int hp, int damage, char symbol, Point pos) : Character(hp, damage, symbol, pos) {}
+    Enemy(int hp, int damage, std::string symbol, Point pos) : Character(hp, damage, symbol, pos) {}
 
 };
 
 class Omon: public Enemy
 {
 public:
-    Omon(int hp, int damage, char symbol, Point pos) : Enemy(hp, damage, symbol, pos) {}
+    Omon(int hp, int damage, std::string symbol, Point pos) : Enemy(hp, damage, symbol, pos) {}
     ~Omon() override = default;
 
 };
@@ -162,7 +163,7 @@ public:
 class Putan: public Enemy
 {
 public:
-    Putan(int hp, int damage, char symbol, Point pos) : Enemy(hp, damage, symbol, pos) {}
+    Putan(int hp, int damage, std::string symbol, Point pos) : Enemy(hp, damage, symbol, pos) {}
     ~Putan() override = default;
 
 };

@@ -1,0 +1,56 @@
+{
+  "rows_cnt" : 12,
+  "cols_cnt" : 12,
+  "move_left": 97,
+  "move_right": 100,
+  "move_up": 119,
+  "move_down": 115,
+  "shoot_left": 107,
+  "shoot_right": 108,
+  "shoot_up": 105,
+  "shoot_down": 107,
+  "escape": 27,
+  "Character":{
+    "hp" : 2147483647,
+    "damage" : 0,
+    "symbol" : " "
+  },
+  "Navalny":{
+    "hp" : 100,
+    "damage" : 5,
+    "symbol" : "N",
+    "money" : 50
+  },
+  "Kremlin":{
+    "symbol" : "K"
+  },
+  "Wall":{
+    "symbol" : "#"
+  },
+  "Meth":{
+    "symbol" : "+",
+    "value" : 1500
+  },
+  "Cash":{
+    "symbol" : "$",
+    "value" : 15000
+  },
+  "PaperPlane":{
+    "damage" : 2,
+    "symbol_up" : "^",
+    "symbol_down" : "v",
+    "symbol_right" : ">",
+    "symbol_left" : "<",
+    "cost" : 4
+  },
+  "Omon":{
+    "hp" : 11,
+    "damage" : 2,
+    "symbol" : "O"
+  },
+  "Putan":{
+    "hp" : 60,
+    "damage" : 11,
+    "symbol" : "P"
+  }
+}

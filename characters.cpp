@@ -11,7 +11,6 @@ void Character::collide(Character &other, std::shared_ptr<Map> map)
     Point temp = this->pos();
     this->pos(other.pos());
     other.pos(temp);
-    auto debug_map = *map;         //debug info
 }
 
 void Character::collide(Enemy &other, std::shared_ptr<Map> map)

@@ -124,7 +124,7 @@ void Game::make_turn() {
 }
 
 void Game::draw() {
-    clear();
+    /*clear();
     auto temp_map = map()->map();
     for (const auto &i : temp_map) {
         for (const auto &j : i) {
@@ -139,10 +139,11 @@ void Game::draw() {
         addch(interactable->symbol());
         addstr((" HP: " + std::to_string(interactable->hp()) + "\n").c_str());  //debug info
     }
-}
+
+}*/
 
 void Game::start() {
-    initscr();	noecho();   raw();  timeout(1);
+    initscr();	noecho();   raw();   draw();    halfdelay(1);
     const auto cfg = config()->json();
     bool win = false;
     bool loose = false;
