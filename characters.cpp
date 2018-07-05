@@ -1,6 +1,8 @@
 #include "characters.h"
 #include <cmath>
 
+const Point directions[] = {Point(1, 0), Point(-1, 0), Point(0, 1), Point(0, -1)};
+
 void Character::collide(Character &other, std::shared_ptr<Map> map)
 {
     if (map->is_on_map(other.pos())) {
@@ -53,30 +55,9 @@ void Navalny::collide(Projectile &other, std::shared_ptr<Map> map)
     other.destroy();
 }
 
-void Enemy::move(std::shared_ptr<Map> map)
+void Enemy::move(std::shared_ptr<Map> map) //DONE: Вынесены направления
 {
-    Point dir;
-    switch (rand() % 4) {
-    case 0: {
-        dir = Point(-1, 0);
-        break;
-    }
-    case 1: {
-        dir = Point(1, 0);
-        break;
-    }
-    case 2: {
-        dir = Point(0, 1);
-        break;
-    }
-    case 3: {
-        dir = Point(0, -1);
-        break;
-    }
-    default: {
-        break;
-    }
-    }
+    Point dir = directions[rand() % 4];
     Point other_pos(this->pos().x() + dir.x(), this->pos().y() + dir.y());
     map->map()[other_pos.x()][other_pos.y()]->collide(*this, map);
 }

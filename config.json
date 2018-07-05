@@ -1,6 +1,6 @@
 {
-  "rows_cnt" : 12,
-  "cols_cnt" : 12,
+  "rows_cnt" : 24,
+  "cols_cnt" : 24,
   "move_left": 97,
   "move_right": 100,
   "move_up": 119,
